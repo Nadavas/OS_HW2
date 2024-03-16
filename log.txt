@@ -1,0 +1,15 @@
+
+5: New account id is 10 with password 1234 and initial balance 1000
+Error 17: Your transaction failed - account with the same id exists
+5: New account id is 20 with password 3333 and initial balance 5000
+Error 11: Your transaction failed - account id 11 does not exist
+Error 11: Your transaction failed - password for account id 10 is incorrect
+5: Account 10 is now closed. Balance was 1000
+7: Account 20 new balance is 5023 after 23 $ was deposited
+12: New account id is 21 with password 1133 and initial balance 5757
+Error 10: Your transaction failed - account id 21 balance is lower than 9000
+19: Account 21 new balance is 3757 after 2000 $ was withdrew
+Error 2: Your transaction failed - password for account id 21 is incorrect
+Error 2: Your transaction failed - account id 23 does not exist
+2: Account 20 balance is 5023
+Error 2: Your transaction failed - account id 21 balance is lower than 6000
