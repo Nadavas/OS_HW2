@@ -11,6 +11,63 @@ fstream logFile("log.txt", ios::in | ios::app);
 //creating the mutex for the log file
 pthread_mutex_t logFile_mutex;
 
+
+/************************************************/
+/****************WRITERS READERS*****************/
+/************************************************/
+
+//// ALL WRITERS READERS METHODS ////
+//// Implemented with mutex and a counter //
+//// so it's basically a semaphore /////////
+void readers_lock(pthread_mutex_t* read_mutex, int counter, pthread_mutex_t* write_mutex){
+    if(pthread_mutex_lock(read_mutex)){
+        perror("Bank error : pthread_mutex_lock failed");
+        logFile.close();
+        exit(0);
+    }
+    counter++;
+    if(counter == 1)
+        writers_lock(write_mutex);
+    if(pthread_mutex_unlock(read_mutex)){
+        perror("Bank error : pthread_mutex_unlock failed");
+        logFile.close();
+        exit(0);
+    }
+}
+
+void readers_unlock(pthread_mutex_t* read_mutex, int counter, pthread_mutex_t* write_mutex){
+    if(pthread_mutex_lock(read_mutex)){
+        perror("Bank error : pthread_mutex_lock failed");
+        logFile.close();
+        exit(0);
+    }
+    counter--;
+    if(counter == 0)
+       writers_unlock(write_mutex);
+    if(pthread_mutex_unlock(read_mutex)){
+        perror("Bank error : pthread_mutex_unlock failed");
+        logFile.close();
+        exit(0);
+    }
+}
+
+void writers_lock(pthread_mutex_t* write_mutex){
+   if(pthread_mutex_lock(write_mutex)){
+        perror("Bank error : pthread_mutex_lock failed");
+        logFile.close();
+        exit(0);
+    } 
+}
+
+void writers_unlock(pthread_mutex_t* write_mutex){
+   if(pthread_mutex_unlock(write_mutex)){
+        perror("Bank error : pthread_mutex_unlock failed");
+        logFile.close();
+        exit(0);
+    } 
+}
+
+
 /************************************************/
 /*******************Bank*************************/
 /************************************************/
@@ -38,41 +95,8 @@ Bank::~Bank() {
     }
 }
 
-//// ALL WRITERS READERS BANK'S METHODS ////
-void Bank::bank_read_lock(){
-    if(pthread_mutex_lock(&bank_read_mutex)){
-        perror("Bank error : pthread_mutex_lock failed");
-        logFile.close();
-        exit(0);
-    }
-    bank_num_readers++;
-    if(bank_num_readers == 1)
-        bank_write_lock();
-    if(pthread_mutex_unlock(&bank_read_mutex)){
-        perror("Bank error : pthread_mutex_unlock failed");
-        logFile.close();
-        exit(0);
-    }
-}
-
-void Bank::bank_read_unlock(){
-    if(pthread_mutex_lock(&bank_read_mutex)){
-        perror("Bank error : pthread_mutex_lock failed");
-        logFile.close();
-        exit(0);
-    }
-    bank_num_readers--;
-    if(bank_num_readers == 0)
-        bank_write_unlock();
-    if(pthread_mutex_unlock(&bank_read_mutex)){
-        perror("Bank error : pthread_mutex_unlock failed");
-        logFile.close();
-        exit(0);
-    }
-}
-
 void Bank::open_account(int acc_num, int password, int initial_balance, int atm_id) {
-    //lock bank - WRITER
+    //lock bank - WRITER    writers_lock(bank_write_mutex);
     //sleep(1)
     if (accounts.find(acc_num) != accounts.end()) {
         //lock log
@@ -88,7 +112,7 @@ void Bank::open_account(int acc_num, int password, int initial_balance, int atm_
         << password <<" and initial balance "<< initial_balance << endl;
     //unlock log
     
-    //unlock bank - WRITER
+    //unlock bank - WRITER  writers_unlock(bank_write_mutex);
 }
 
 
@@ -120,7 +144,7 @@ void Bank::close_account(int acc_num, int password, int atm_id) {
 
 void Bank::deposit_account(int acc_num, int password, int amount, int atm_id){
     // sleep(1)
-    // lock bank - READER
+    // lock bank - READER   readers_lock(bank_read_mutex,bank_num_readers,bank_write_mutex)
     map<int, Account>::iterator it = accounts.find(acc_num);
     if (it == accounts.end()) {
         //lock log
@@ -134,7 +158,7 @@ void Bank::deposit_account(int acc_num, int password, int amount, int atm_id){
         //unlock log
         return;
     }
-    //lock specific account balance mutex - WRITER
+    //lock specific account balance mutex - WRITER  writers_lock(it->second.acc_write_mutex); 
     it->second.balance += amount;
     //lock log
     logFile << atm_id << ": Account " << acc_num << " new balance is " << it->second.balance 
@@ -195,7 +219,7 @@ void Bank::check_balance_account(int acc_num, int password, int atm_id){
         //unlock log
         return;
     }
-    //lock specific account balance mutex - READER
+    //lock specific account balance mutex - READER  readers_lock(it->second.acc_read_mutex, it->second.acc_num_readers, it->second.acc_write_mutex);
     // lock log
     logFile << atm_id << ": Account " << acc_num << " balance is " << it->second.balance << endl; 
     // unlock log
@@ -282,8 +306,8 @@ Account::Account() {
     }
 };	//need to fix
 
-Account::Account(int password, int balance, int num_readers)
-    : password(password), balance(balance), num_readers(num_readers) {
+Account::Account(int password, int balance, int acc_num_readers)
+    : password(password), balance(balance), acc_num_readers(acc_num_readers) {
     if (pthread_mutex_init(&this->acc_read_mutex, NULL) != 0) {
         perror("Bank error : pthread_mutex_init failed");
         exit(0);

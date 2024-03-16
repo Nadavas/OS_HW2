@@ -21,6 +21,12 @@ using namespace std;
 extern fstream logFile;
 extern pthread_mutex_t logFile_mutex;
 
+// Readers & Writers methods
+void readers_lock(pthread_mutex_t* read_mutex, int counter, pthread_mutex_t* write_mutex);
+void readers_unlock(pthread_mutex_t* read_mutex, int counter, pthread_mutex_t* write_mutex);
+void writers_lock(pthread_mutex_t* write_mutex);
+void writers_unlock(pthread_mutex_t* write_mutex);
+
 class Account {
 public:
 	int password;
@@ -49,12 +55,6 @@ public:
 	//constructors and destructor
 	Bank();
 	~Bank();
-
-	// writers readers methods for Bank
-	void bank_read_lock();
-	void bank_read_unlock();
-	void bank_write_lock();
-	void bank_write_unlock();
 	
 	//methods
 	void open_account(int acc_num, int password, int initial_balance, int atm_id);
