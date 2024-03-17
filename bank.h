@@ -17,6 +17,7 @@
 #include <fstream>
 #include <random>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -74,6 +75,7 @@ public:
 
 //help functions
 	int randomize_fee();
+	char parse_line(const std::string& input_line, std::vector<int>& args);
 
 #endif
 

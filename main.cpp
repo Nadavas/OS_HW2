@@ -14,7 +14,74 @@ int main(int argc, char *argv[]){
 	ofstream clearLogFile("log.txt", std::ios::out);
 	clearLogFile << "" << std::endl;
 	clearLogFile.close(); // Close the file after truncating it
+	
+	vector<int> args;
+	string input = "O 12345 1234 300";
+	char cmd = parse_line(input, args);
+	cout << cmd << endl;
+	for(int i=0; i<args.size();i++)
+		cout << args[i] << endl;
+	logFile.close();
+	return 0;
+}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 	bank.open_account(10, 1234, 1000, 5);
 	bank.open_account(10, 4567, 400, 17);
 	bank.open_account(20, 3333, 5000, 5);
@@ -44,7 +111,4 @@ int main(int argc, char *argv[]){
 	cout << endl;
 	bank.take_fees_account();
 	bank.print_accounts();
-	logFile.close();
-	return 0;
-}
-
+	*/

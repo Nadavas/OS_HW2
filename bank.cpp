@@ -405,3 +405,19 @@ int randomize_fee(){
     // Generate and return a random integer
     return dis(gen);
 }
+
+char parse_line(const std::string& input_line, std::vector<int>& args) {
+    char* line_copy = new char[input_line.length() + 1];
+    std::strcpy(line_copy, input_line.c_str());
+
+    char* token = std::strtok(line_copy, " ");
+    char first_char = *token;
+
+    while ((token = std::strtok(NULL, " ")) != NULL) {
+        args.push_back(std::stoi(token));
+    }
+
+    delete[] line_copy;
+
+    return first_char;
+}
