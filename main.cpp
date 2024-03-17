@@ -40,8 +40,10 @@ int main(int argc, char *argv[]){
 		cout << it->first << "   "<< it->second.password <<"   " << it->second.balance << endl;
 		it++;
 	}
-	
 
+	cout << endl;
+	bank.take_fees_account();
+	bank.print_accounts();
 	logFile.close();
 	return 0;
 }

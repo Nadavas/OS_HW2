@@ -15,11 +15,13 @@
 #include <iostream>
 #include <pthread.h>
 #include <fstream>
+#include <random>
+#include <cmath>
 
 using namespace std;
 
 extern fstream logFile;
-extern pthread_mutex_t logFile_mutex;
+extern pthread_mutex_t* logFile_mutex;
 
 // Readers & Writers methods
 void readers_lock(pthread_mutex_t* read_mutex, int counter, pthread_mutex_t* write_mutex);
@@ -32,8 +34,8 @@ public:
 	int password;
 	int balance;
 	int acc_num_readers;
-	pthread_mutex_t acc_read_mutex;
-	pthread_mutex_t acc_write_mutex;
+	pthread_mutex_t* acc_read_mutex;
+	pthread_mutex_t* acc_write_mutex;
 	
 	//constructors and destructor
 	Account();
@@ -49,8 +51,8 @@ public:
 	Account manager_acc;
 	map<int, Account> accounts;
 	int bank_num_readers;
-	pthread_mutex_t bank_read_mutex;	
-	pthread_mutex_t bank_write_mutex;
+	pthread_mutex_t* bank_read_mutex;	
+	pthread_mutex_t* bank_write_mutex;
 
 	//constructors and destructor
 	Bank();
@@ -63,14 +65,15 @@ public:
 	void withdraw_account(int acc_num, int password, int amount, int atm_id);
 	void check_balance_account(int acc_num, int password, int atm_id);
 	void transfer_funds_account(int src_acc_num, int src_acc_password, int trg_acc_num, int amount, int atm_id);
-
+	void take_fees_account();
+	void print_accounts();
 	
 
 };
 
 
 //help functions
-
+	int randomize_fee();
 
 #endif
 

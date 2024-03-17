@@ -13,3 +13,5 @@ Error 2: Your transaction failed - password for account id 21 is incorrect
 Error 2: Your transaction failed - account id 23 does not exist
 2: Account 20 balance is 5023
 Error 2: Your transaction failed - account id 21 balance is lower than 6000
+Bank: commissions of 5 % were charged, the bank gained 251 $ from account 20
+Bank: commissions of 5 % were charged, the bank gained 188 $ from account 21
