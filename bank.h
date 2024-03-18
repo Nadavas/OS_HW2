@@ -18,11 +18,13 @@
 #include <random>
 #include <cmath>
 #include <vector>
+#include <utility>
 
 using namespace std;
 
 extern fstream logFile;
 extern pthread_mutex_t* logFile_mutex;
+
 
 // Readers & Writers methods
 void readers_lock(pthread_mutex_t* read_mutex, int counter, pthread_mutex_t* write_mutex);
@@ -72,10 +74,11 @@ public:
 
 };
 
-
+extern Bank bank;
 //help functions
 	int randomize_fee();
-	char parse_line(const std::string& input_line, std::vector<int>& args);
-
+	char parse_line(const string& input_line, vector<int>& args);
+	vector<string> convert_file_to_vec(const string& filePath);
+	void exe_command(char cmd_type, vector<int> cmd_args, int atm_id); 
 #endif
 

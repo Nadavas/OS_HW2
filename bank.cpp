@@ -3,7 +3,6 @@
 /*******************************************/
 #include "bank.h"
 
-
 using namespace std;
 
 //creating the log file with read and append permissions
@@ -406,7 +405,7 @@ int randomize_fee(){
     return dis(gen);
 }
 
-char parse_line(const std::string& input_line, std::vector<int>& args) {
+char parse_line(const string& input_line, vector<int>& args) {
     char* line_copy = new char[input_line.length() + 1];
     std::strcpy(line_copy, input_line.c_str());
 
@@ -420,4 +419,45 @@ char parse_line(const std::string& input_line, std::vector<int>& args) {
     delete[] line_copy;
 
     return first_char;
+}
+
+vector<string> convert_file_to_vec(const string& filePath){
+    vector<string> lines;
+    ifstream inputFile(filePath);
+    
+    if (!inputFile.is_open()) {
+        cerr << "Bank error: illegal arguments " << endl;
+        return lines;
+    }
+    string line;
+    while (getline(inputFile, line)) {
+        lines.push_back(line);
+    }
+    inputFile.close();
+    return lines;
+}
+
+void exe_command(char cmd_type, vector<int> cmd_args, int atm_id){
+    switch(cmd_type){
+        case 'O': 
+            bank.open_account(cmd_args[0], cmd_args[1], cmd_args[2], atm_id);
+            break;
+        case 'D':
+            bank.deposit_account(cmd_args[0], cmd_args[1], cmd_args[2], atm_id);
+            break;
+        case 'W':
+            bank.withdraw_account(cmd_args[0], cmd_args[1], cmd_args[2], atm_id);
+            break;
+        case 'B':
+            bank.check_balance_account(cmd_args[0], cmd_args[1], atm_id);
+            break;
+        case 'Q':
+            bank.close_account(cmd_args[0], cmd_args[1], atm_id);
+            break;
+        case 'T':
+            bank.transfer_funds_account(cmd_args[0], cmd_args[1], cmd_args[2], cmd_args[3] ,atm_id);
+            break;
+        default: return;
+    }
+
 }
