@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -std=c++11 -pthread 
 
 main: main.o bank.o
 	$(CC) $(CFLAGS) -o main main.o bank.o
